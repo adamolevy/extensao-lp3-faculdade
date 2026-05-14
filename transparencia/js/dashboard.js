@@ -4,7 +4,7 @@ const menuItems = [
         id: 1,
         title: "Informações Prioritárias",
         icon: "fas fa-star",
-        submenus: ["Informações essenciais", "Dados críticos", "Indicadores principais"]
+        submenus: ["Informações essenciais", "Dados críticos", "Indicadores principais", "Perguntas Frequentes"]
     },
     {
         id: 2,
@@ -149,11 +149,7 @@ if (pushState) {
     else if (moduleName === 'acessibilidade') newPath += 'acessibilidade';
     else if (moduleName === 'informações institucionais' && submenu === 'Estrutura organizacional') newPath += 'estrutura-organizacional';
     else if (moduleName === 'informações institucionais' && submenu === 'Competências') newPath += 'competencias';
-
-    else if (path === 'competencias') {
-    loadModule('informações institucionais', 'Competências', false);
-    setActiveMenuItemByTitle('Informações Institucionais');
-}
+    else if (moduleName === 'informações prioritárias' && submenu === 'Perguntas Frequentes') newPath += 'perguntas-frequentes';
 
     if (newPath !== window.location.pathname) {
         history.pushState({ module: moduleName, submenu: submenu }, "", newPath);
@@ -186,7 +182,14 @@ if (pushState) {
                 } else {
                     loadDefaultModule(moduleName, submenu);
                 }
-                break;    
+                break;
+            case 'informações prioritárias':
+                if (submenu === 'Perguntas Frequentes') {
+                    loadFAQModule(moduleName, submenu);
+                } else {
+                    loadDefaultModule(moduleName, submenu);
+                }
+                break;
             case 'planejamento':
                 if (submenu === 'RGF') {
                     loadRGFModule(moduleName, submenu);
@@ -275,6 +278,25 @@ function loadCompetenciasModule(moduleName, submenu) {
             style="width: 100%; min-height: 800px; border: none; border-radius: 8px;"
             onload="this.style.height = (this.contentWindow.document.body.scrollHeight + 50) + 'px';">
         </iframe>
+        </div>
+    `;
+}
+
+// Função para carregar o módulo de Perguntas Frequentes (FAQ)
+function loadFAQModule(moduleName, submenu) {
+    const workspace = document.getElementById('workspace');
+    
+    workspace.innerHTML = `
+        ${getBreadcrumbsHTML(moduleName, submenu)}
+        <div class="module-header">
+            <h2><i class="fas fa-question-circle"></i> Perguntas Frequentes</h2>
+            <p>Encontre respostas para as dúvidas mais comuns sobre o Portal da Transparência</p>
+        </div>
+        <div class="module-content">
+            <iframe src="faq/faq.php" 
+                    style="width: 100%; min-height: 800px; border: none; border-radius: 8px;"
+                    onload="this.style.height = (this.contentWindow.document.body.scrollHeight + 50) + 'px';">
+            </iframe>
         </div>
     `;
 }
@@ -557,6 +579,9 @@ function handleRouting() {
     } else if (path === 'contratos') {
         loadModule('contratos', 'Relação de contratos', false);
         setActiveMenuItemByTitle('Contratos');
+    } else if (path === 'perguntas-frequentes') {
+        loadModule('informações prioritárias', 'Perguntas Frequentes', false);
+        setActiveMenuItemByTitle('Informações Prioritárias');
     } else {
         loadDashboard(false);
     }
